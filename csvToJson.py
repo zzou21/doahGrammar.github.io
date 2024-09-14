@@ -1,27 +1,19 @@
-import pandas as pd
-import json
-
-#test
+import pandas as pd, json, csv
 
 def csvJson(csvFile, JsonFile):
-    dictionaryDoAHContent = {}
-    doahContentDF = pd.read_csv(csvFile)
-    for i in range(len(doahContentDF)):
-        oneRowContent = tuple(doahContentDF.loc[i].values)
-        dictionaryDoAHContent[oneRowContent[:2]] = oneRowContent[2]
-    print(dictionaryDoAHContent)
-
-
-    
-    # with open(JsonFile, "w") as jsonFileDump:
-    #     json.dump(dictionaryDoAHContent, jsonFileDump, indnet=4)
+    dictionaryDoAHContent = {} #format: {"name": [ID, "overview"]
+    with open(csvFile, "r", encoding="utf-8") as csvContent:
+        doahCSVContent = csv.reader(csvContent)
+        for oneRowHistorian in doahCSVContent:
+            try:
+                historianID = int(oneRowHistorian[0])
+                dictionaryDoAHContent[oneRowHistorian[1]] = [historianID, oneRowHistorian[2]]
+            except ValueError: continue
+    with open(JsonFile, "w", encoding="utf-8") as jsonFileDump:
+        json.dump(dictionaryDoAHContent, jsonFileDump, ensure_ascii=False, indent=4)
     print("Converted to JSON.")
 
-
-
-
 if __name__=="__main__":
-    CsvFilePath = "/Users/Jerry/Desktop/Dictionary of Art Historians/doahGrammar/Art-Historians-Export-2024-September-10-1339.csv"
-    JsonFilePathDestination = "/Users/Jerry/Desktop/Dictionary of Art Historians/GrammarCheckerDoAH/DoahContent.json"
-    print(csvJson(CsvFilePath, JsonFilePathDestination))
-    
+    CsvFilePath = "/Users/Jerry/Desktop/Dictionary of Art Historians/doahGrammar/DoAHCSVContent.csv"
+    JsonFilePathDestination = "/Users/Jerry/Desktop/Dictionary of Art Historians/doahGrammar/doahContentJSON.json"
+    csvJson(CsvFilePath, JsonFilePathDestination)
