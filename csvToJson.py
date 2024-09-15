@@ -14,6 +14,6 @@ def csvJson(csvFile, JsonFile):
     print("Converted to JSON.")
 
 if __name__=="__main__":
-    CsvFilePath = "/Users/Jerry/Desktop/Dictionary of Art Historians/doahGrammar/DoAHCSVContent.csv"
-    JsonFilePathDestination = "/Users/Jerry/Desktop/Dictionary of Art Historians/doahGrammar/doahContentJSON.json"
+    CsvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
+    JsonFilePathDestination = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
     csvJson(CsvFilePath, JsonFilePathDestination)
