@@ -1,13 +1,33 @@
-import language_tool_python
+import language_tool_python, json
+# json format: dictionary - {"lastName, firstName": [id, "description"]}
 
 sentence1 = "I is eating lunch."
 sentence2 = "She were going to the market."
 sentence3 = "They has completed their work."
-# class grammarCheck:
-#     def __init__(jsonFilePath, nameDictionary):
+class grammarCheck:
+    def __init__(self, jsonFilePath, nameDictionary):
+        self.jsonFilePath = jsonFilePath
+        self.nameDictionary = nameDictionary
+        self.DoAHJsonContent = None
 
-# def grammarChecker(sentence):
+    def processJson(self):
+        with open(self.jsonFilePath, "r") as jsonContent:
+            self.DoAHJsonContent = json.load(jsonContent)
     
+    def sentenceSegmentation 
+        
+
+        
+
+
+if __name__ == "__main__":
+    jsonFile = ""
+    nameDictionary = ""
+    grammarCheckMachine = grammarCheck(jsonFile, nameDictionary)
+    print
+
+
+
 grammarChecker = language_tool_python.LanguageTool("en-US")
 sentences = [sentence1, sentence2, sentence3]
 
@@ -17,10 +37,4 @@ for sentenceCount, sentenceToCheck in enumerate(sentences, start=1):
     for individualError in results:
         print(f"RuleId: {individualError.replacements[0]}")
 
-# for index in results:
-#     print(f"ruleId: {index.ruleId}")
-#     print(index)
 
-# print(f"Length of the error is: {len(results)}")
-# print(f"The full error is: {results}")
-# print(f"First index is: {results[0][ruleId]}")
