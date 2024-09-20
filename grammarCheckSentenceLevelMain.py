@@ -14,11 +14,11 @@ from nltk.tokenize import PunktSentenceTokenizer
 # sentence3 = "They has completed their work."
 
 class grammarCheckSentenceLevel:
-    def __init__(self, jsonFilePath, nameDictionary, doAHContentSentSegmentedJsonFile):
+    def __init__(self, jsonFilePath, nameDictionary, errorMessageStorageJson, doAHContentSentSegmentedJsonFile):
         self.jsonFilePath = jsonFilePath
         self.nameDict = nameDictionary
+        self.errorMessageStorageJson = errorMessageStorageJson
         self.doAHContentSentSegmentedJsonFile = doAHContentSentSegmentedJsonFile
-
         self.DoAHJsonContentDict = None
         self.DoAHSentSegDict = {} # This dictionary stores the DoAH content that has been sentence-segmented. Format: {"lastName, firstName": [id, "sentence-segmented description"]}
 
@@ -42,13 +42,14 @@ class grammarCheckSentenceLevel:
 
     # This function and interface check grammar and errors at the sentence-level, using historian overviews that have been sentence-segmented from the "sentenceSegmentation" function.
     def sentenceGrammarCheck(self):
-        correctedVersion = {} #This dictionary holds the corrected list of sentences to be dumped into a new JSON
+        errorMessageWithSentenceDict = {} #This dictionary holds the corrected list of sentences to be dumped into a new JSON
         grammarCheckerFunction = language_tool_python.LanguageTool("en-US")
         for historian, IdOverviewSegmentedList in self.DoAHSentSegDict.items():
             for Id, segmentedOverview in IdOverviewSegmentedList:
                 for sentenceToCheck in segmentedOverview:
                     grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                     for errors in grammarCheckResults:
+                        errorMessageWithSentenceDict[]
                         startSlice = errors.offset
                         endSlice = errors.offset+errors.errorLength+1
                         checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
@@ -58,7 +59,6 @@ class grammarCheckSentenceLevel:
                         print(f"The possible replacements are: {errors.replacements}")
          #to do: finish interface and .correct() method.
                     
-
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
         self.processJson()
@@ -73,7 +73,8 @@ if __name__ == "__main__":
     nameDictionary = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/historianNames.json"
     doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentSentSegmentedJSON.json"
     smallScaleTestJson = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSentSegPractice.json"
-    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevel(smallScaleTestJson, nameDictionary, doAHContentSentSegmentedJsonFile)
+    errorMessageStorage = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
+    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevel(smallScaleTestJson, nameDictionary, errorMessageStorage, doAHContentSentSegmentedJsonFile)
     grammarCheckSentenceLevelMachine.operations()
     # print(grammarCheckSentenceLevelMachine.DoAHSentSegDict)
 

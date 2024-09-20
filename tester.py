@@ -18,7 +18,7 @@ sentences = "Authority in Byzantine, Medieval, Russian, and primitive decorative
 #     print(e)
 
 
-sentenceTestShort = ["I is eating lunch.", "She were going to the market", "They has completed their work."]
+sentenceTestShort = ["Rocket is lunching.", "She were ging to the market", "They has completed their work."]
 
 for sentenceCount, sentenceToCheck in enumerate(sentenceTestShort, start=1):
     results = grammarChecker.check(sentenceToCheck)
