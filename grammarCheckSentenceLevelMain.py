@@ -65,9 +65,6 @@ class grammarCheckSentenceLevel:
         # self.sentenceSegmentation()
 
 
-# class errorCheckWordLevel:
-#     def __init__(self, ):
-
 if __name__ == "__main__":
     doAHContentJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
     nameDictionary = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/historianNames.json"
