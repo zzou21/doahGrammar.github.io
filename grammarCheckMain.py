@@ -4,6 +4,9 @@ from nltk.tokenize import PunktSentenceTokenizer
 # TO DO: do not forget to add work batch during interface design, so that the system automatically updates the correct dictionary routinely because the user cannot check all errors in one sitting. Could update the correct version dictionary after checking each historian's overview.
 
 # json format: dictionary - {"lastName, firstName": [id, "description"]}
+# language_tool_python error output example:
+    # output = [Match({'ruleId': 'PERS_PRONOUN_AGREEMENT', 'message': 'Did you mean “am” or “will be”?', 'replacements': ['am', 'will be'], 'offsetInContext': 2, 'context': 'I is eating lunch.', 'offset': 2, 'errorLength': 2, 'category': 'GRAMMAR', 'ruleIssueType': 'grammar', 'sentence': 'I is eating lunch.'})]
+    # access specific information through: output.message
 
 # # For testing purposes:
 # sentence1 = "I is eating lunch."
@@ -36,23 +39,24 @@ class grammarCheckSentenceLevel:
         # with open(self.doAHContentSentSegmentedJsonFile, "w", encoding="utf-8") as jsonSegContent:
             # json.dump(self.DoAHSentSegDict, jsonSegContent, ensure_ascii=False, indent = 4)
     
-    # This function and interface check grammar and errors at the sentence-level, using historian overviews that have been sentence-segmented from the "sentenceSegmentation" function.
 
+    # This function and interface check grammar and errors at the sentence-level, using historian overviews that have been sentence-segmented from the "sentenceSegmentation" function.
     def sentenceGrammarCheck(self):
-        correctedVersion = {}
+        correctedVersion = {} #This dictionary holds the corrected list of sentences to be dumped into a new JSON
         grammarCheckerFunction = language_tool_python.LanguageTool("en-US")
         for historian, IdOverviewSegmentedList in self.DoAHSentSegDict.items():
             for Id, segmentedOverview in IdOverviewSegmentedList:
-                sentenceCounter = 1
                 for sentenceToCheck in segmentedOverview:
                     grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                     for errors in grammarCheckResults:
                         startSlice = errors.offset
                         endSlice = errors.offset+errors.errorLength+1
                         checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
-                        print(errors.replacements)
+                        print(f"For the entry for the historian {historian}: ")
                         print(f"Error sentence: {sentenceToCheck}")
                         print(f"Error location: {checkLocationSentence}")
+                        print(f"The possible replacements are: {errors.replacements}")
+         #to do: finish interface and .correct() method.
                     
 
     # This helper function is mainly used during code testing to run the entire class object:
