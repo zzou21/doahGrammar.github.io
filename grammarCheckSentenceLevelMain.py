@@ -49,7 +49,8 @@ class grammarCheckSentenceLevel:
                 for sentenceToCheck in segmentedOverview:
                     grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                     for errors in grammarCheckResults:
-                        errorMessageWithSentenceDict[]
+                        errorMessageAndOffsetHolderList = 
+                        errorMessageWithSentenceDict[historian] = 
                         startSlice = errors.offset
                         endSlice = errors.offset+errors.errorLength+1
                         checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
