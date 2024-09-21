@@ -18,17 +18,43 @@ sentences = "Authority in Byzantine, Medieval, Russian, and primitive decorative
 #     print(e)
 
 
-sentenceTestShort = ["Rocket is lunching.", "She were ging to the market", "They has completed their work."]
+# sentenceTestShort = ["Rocket is lunching.", "She were ging to the market", "They has completed their work."]
+sentenceTestShort = ["Rocket is lunching.", "She have going to the market", "They have completed their work."]
 
 for sentenceCount, sentenceToCheck in enumerate(sentenceTestShort, start=1):
     results = grammarChecker.check(sentenceToCheck)
-    for errors in results:
-        startSlice = errors.offset
-        endSlice = errors.offset+errors.errorLength+1
-        checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
-        print(errors.replacements)
-        print(f"Error sentence: {sentenceToCheck}")
-        print(f"Error location: {checkLocationSentence}")
+    listtest = []
+    if results:
+
+        for errors in results:
+            listtest.append(errors.offset)
+            startSlice = errors.offset
+            endSlice = errors.offset+errors.errorLength+1
+            checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
+            print(errors.replacements)
+            print(f"Error sentence: {sentenceToCheck}")
+            print(f"Error location: {checkLocationSentence}")
+    else:
+        print("test")
+    print(listtest)
+
+
+
+sentencetest2 = "I hs food tonight and it will good."
+result = grammarChecker.check(sentencetest2)
+listHolder = []
+if result:
+    print(f"Real result: {result}")
+    for errors in result:
+        var = errors.replacements
+        listHolder.append(var)
+print(f"Real test {listHolder}")
+
+
+with open("/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json", "r") as file:
+    file1 = json.load(file)
+    for a, b in file1:
+        print(b)
 
     # print(f"Error for sentence # {sentenceCount} -- {sentenceToCheck}:")
     # for individualError in results:
