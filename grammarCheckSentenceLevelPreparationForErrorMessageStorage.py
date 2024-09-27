@@ -3,6 +3,8 @@ from nltk.tokenize import PunktSentenceTokenizer
 
 # TO DO: do not forget to add work batch during interface design, so that the system automatically updates the correct dictionary routinely because the user cannot check all errors in one sitting. Could update the correct version dictionary after checking each historian's overview.
 
+# TO DO September 27: ignore grammar check for words inside < >
+
 # json format: dictionary - {"lastName, firstName": [id, "description"]}
 # language_tool_python error output example:
     # output = [Match({'ruleId': 'PERS_PRONOUN_AGREEMENT', 'message': 'Did you mean “am” or “will be”?', 'replacements': ['am', 'will be'], 'offsetInContext': 2, 'context': 'I is eating lunch.', 'offset': 2, 'errorLength': 2, 'category': 'GRAMMAR', 'ruleIssueType': 'grammar', 'sentence': 'I is eating lunch.'})]
@@ -75,7 +77,6 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
         with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
             json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
 
-         #to do after 9/21/2024: finish interface and .correct() method by pulling error messages from doahGrammarErrorStorage.json and manipulating the content.
                     
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
