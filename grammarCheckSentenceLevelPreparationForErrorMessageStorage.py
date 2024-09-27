@@ -8,7 +8,7 @@ from nltk.tokenize import PunktSentenceTokenizer
     # output = [Match({'ruleId': 'PERS_PRONOUN_AGREEMENT', 'message': 'Did you mean “am” or “will be”?', 'replacements': ['am', 'will be'], 'offsetInContext': 2, 'context': 'I is eating lunch.', 'offset': 2, 'errorLength': 2, 'category': 'GRAMMAR', 'ruleIssueType': 'grammar', 'sentence': 'I is eating lunch.'})]
     # access specific information through: output.message
 
-class grammarCheckSentenceLevel:
+class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
     def __init__(self, jsonFilePathUnsegmented, nameDictionary, errorMessageStorageJson, doAHContentSentSegmentedJsonFile):
         self.jsonFilePathUnsegmented = jsonFilePathUnsegmented
         self.nameDict = nameDictionary
@@ -37,10 +37,8 @@ class grammarCheckSentenceLevel:
             # self.DoAHSentSegDict[historianString] = [historianIdInt, singleHistorianSentSegList]
             self.DoAHSentSegDict[historianString] = singleHistorianSentSegList
 
-            
         with open(self.doAHContentSentSegmentedJsonFile, "w", encoding="utf-8") as jsonSegContent:
             json.dump(self.DoAHSentSegDict, jsonSegContent, ensure_ascii=False, indent = 4)
-    
 
     # This function and interface check grammar and errors at the sentence-level, using historian overviews that have been sentence-segmented from the "sentenceSegmentation" function.
     def sentenceGrammarCheck(self):
@@ -70,11 +68,9 @@ class grammarCheckSentenceLevel:
                         
                     sentenceCheckedForEachHistorianDict[sentenceToCheck] = errorMessageAndOffsetHolderList
 
-                else:
-                    sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
+                else: sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
 
             self.errorMessageStorageWithSentenceDict[historian] = sentenceCheckedForEachHistorianDict
-
 
         with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
             json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
@@ -84,9 +80,10 @@ class grammarCheckSentenceLevel:
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
         # self.processJsonUnsegmented()
-        self.processJsonSegmented()
+        # self.processJsonSegmented()
         # self.sentenceSegmentation()
-        self.sentenceGrammarCheck()
+        # self.sentenceGrammarCheck()
+        self.readSentenceLevelErrorStorageAndDisplayInterface()
 
 if __name__ == "__main__":
     doAHContentJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
@@ -98,7 +95,8 @@ if __name__ == "__main__":
     smallScaleTestJson = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
     errorMessageStorage = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
 
-    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevel(doAHContentJsonFile, nameDictionary, errorMessageStorage, smallScaleTestJson)
+    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevelPreparationForErrorMessageStorage(doAHContentJsonFile, nameDictionary, errorMessageStorage, smallScaleTestJson)
+
     grammarCheckSentenceLevelMachine.operations()
     print(grammarCheckSentenceLevelMachine.errorMessageStorageWithSentenceDict)
 
