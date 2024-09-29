@@ -1,6 +1,7 @@
 import json
          #to do after 9/21/2024: finish interface and .correct() method by pulling error messages from doahGrammarErrorStorage.json and manipulating the content.
 
+# This class objects takes in the message error storage and deploys the correction user interface.
 class grammarCheckSentenceLevelRevisionInterface:
     def __init__ (self, errorMessageStorageJson):
         self.errorMessageStorageJson = errorMessageStorageJson
