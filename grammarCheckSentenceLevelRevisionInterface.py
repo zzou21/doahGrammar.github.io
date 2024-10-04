@@ -46,15 +46,14 @@ class grammarCheckSentenceLevelRevisionInterface:
                             else:
                                 print(f"This works: {userSelectionRevisionSuggestionIndexInt}")
                                 print(correctionRecommendations)
-                                
+
                                 revisedSentence = originalSentence[:startSlice] + userSelectedRevisionChoiceString + " " + originalSentence[endSlice:]
                                 print(f"Revised sentence->>{revisedSentence}")
             # TO DO from September 27: finish implementing the interface and store the corrected sentences in a dictionary. Add the feature where the user could take a break from editing. Add the feature if user doesn't see what they want to edit. Add the feature where the user wants to go back.
                                 break
 
 
-                            
-                     
+
                         print(type(userRevisionSelection))
                         print(userRevisionSelection)
 

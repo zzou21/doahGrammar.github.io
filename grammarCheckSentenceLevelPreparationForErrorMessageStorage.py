@@ -1,4 +1,4 @@
-import language_tool_python, json
+import language_tool_python, json, re
 from nltk.tokenize import PunktSentenceTokenizer
 
 # TO DO: do not forget to add work batch during interface design, so that the system automatically updates the correct dictionary routinely because the user cannot check all errors in one sitting. Could update the correct version dictionary after checking each historian's overview.
@@ -45,28 +45,57 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
     # This function and interface check grammar and errors at the sentence-level, using historian overviews that have been sentence-segmented from the "sentenceSegmentation" function.
     def sentenceGrammarCheck(self):
         grammarCheckerFunction = language_tool_python.LanguageTool("en-US")
-        print(self.DoAHSentSegDict)
+        # print(self.DoAHSentSegDict)
         for historian, IdOverviewSegmentedList in self.DoAHSentSegDict.items():
             sentenceCheckedForEachHistorianDict = {}
             for sentenceToCheck in IdOverviewSegmentedList:
-                # for sentenceToCheck in segmentedOverview:
+
                 print(sentenceToCheck)
+
+                # Checking for XML locations:
+                xmlRegexPattern = r"<em>(.*?)</em>|<a.*?>(.*?)</a>"
+                appearances = re.findall(xmlRegexPattern, sentenceToCheck)
+                print(f"Appearance of XML: {appearances}")
+                xmlTagIndexRangeListOfTuples = [] #type: [[[indexEMStart, indexEMEnd], [indexAStart, indexAEnd]], [indexEMStart, indexEMEnd], [indexAStart, indexAEnd]]
+
+                for xmlAppearance in appearances:
+                    appearanceRangeTuple = []
+                    typeEMxml, typeAxml = xmlAppearance
+                    if typeEMxml:
+                        appearanceRangeTuple.append([sentenceToCheck.find(typeEMxml),sentenceToCheck.find(typeEMxml) + len(typeEMxml)])
+                    if  typeAxml:
+                        appearanceRangeTuple.append([sentenceToCheck.find(typeAxml),sentenceToCheck.find(typeAxml) + len(typeAxml)])
+                    xmlTagIndexRangeListOfTuples.append(appearanceRangeTuple)
+                print(f"xmlTagRange: {xmlTagIndexRangeListOfTuples} ")
+                
+
                 grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                 sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
                 if grammarCheckResults:
                     errorMessageAndOffsetHolderList = []
 
                     for errors in grammarCheckResults:
+
                         startSlice = errors.offset
                         endSlice = errors.offset+errors.errorLength+1
+                        # TO DO: skip error messages in XML tags:
+
+                        for xmlRange in xmlTagIndexRangeListOfTuples:
+                            if len(xmlRange) > 1:
+                                for xmlDetailedRange in xmlRange:
+                                    if xmlDetailedRange[0] <= startSlice <= xmlDetailedRange[1] and xmlDetailedRange[0] <= endSlice <= xmlDetailedRange[1]:
+                                    # TO DO: October 4, 2024: finish escaping from adding error to list if error appears in XML tag.
+                                    
                         checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
                         correctionSuggestions = errors.replacements[:6] if len(errors.replacements) > 6 else errors.replacements
                         errorMessageAndOffsetHolderList.append([startSlice, endSlice, correctionSuggestions])
-                        print(f"For the entry for the historian {historian}: ")
-                        print(f"Error sentence: {sentenceToCheck}")
-                        print(f"Error location: {checkLocationSentence}")
-                        print(f"The possible replacements are: {errors.replacements}")
-                        print(f"Error list: {errorMessageAndOffsetHolderList}")
+
+
+                        # print(f"For the entry for the historian {historian}: ")
+                        # print(f"Error sentence: {sentenceToCheck}")
+                        # print(f"Error location: {checkLocationSentence}")
+                        # print(f"The possible replacements are: {errors.replacements}")
+                        # print(f"Error list: {errorMessageAndOffsetHolderList}")
                         
                     sentenceCheckedForEachHistorianDict[sentenceToCheck] = errorMessageAndOffsetHolderList
 
@@ -74,17 +103,16 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
 
             self.errorMessageStorageWithSentenceDict[historian] = sentenceCheckedForEachHistorianDict
 
-        with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
-            json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
+        # with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
+        #     json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
 
                     
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
         # self.processJsonUnsegmented()
-        # self.processJsonSegmented()
+        self.processJsonSegmented()
         # self.sentenceSegmentation()
-        # self.sentenceGrammarCheck()
-        self.readSentenceLevelErrorStorageAndDisplayInterface()
+        self.sentenceGrammarCheck()
 
 if __name__ == "__main__":
     doAHContentJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
@@ -99,7 +127,7 @@ if __name__ == "__main__":
     grammarCheckSentenceLevelMachine = grammarCheckSentenceLevelPreparationForErrorMessageStorage(doAHContentJsonFile, nameDictionary, errorMessageStorage, smallScaleTestJson)
 
     grammarCheckSentenceLevelMachine.operations()
-    print(grammarCheckSentenceLevelMachine.errorMessageStorageWithSentenceDict)
+    # print(grammarCheckSentenceLevelMachine.errorMessageStorageWithSentenceDict)
 
 #-----------------
 
