@@ -42,7 +42,7 @@ class grammarCheckSentenceLevelRevisionInterface:
                             except ValueError:
                                 print("Please type a numerical value.")
                             except IndexError:
-                                print("Please type a numericla value provided above.")
+                                print("Please type a numerical value provided above.")
                             else:
                                 print(f"This works: {userSelectionRevisionSuggestionIndexInt}")
                                 print(correctionRecommendations)
