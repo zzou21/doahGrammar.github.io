@@ -49,9 +49,7 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
         for historian, IdOverviewSegmentedList in self.DoAHSentSegDict.items():
             sentenceCheckedForEachHistorianDict = {}
             for sentenceToCheck in IdOverviewSegmentedList:
-
                 print(sentenceToCheck)
-
                 # Checking for XML locations:
                 xmlRegexPattern = r"<em>(.*?)</em>|<a.*?>(.*?)</a>"
                 appearances = re.findall(xmlRegexPattern, sentenceToCheck)
@@ -67,7 +65,6 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                         appearanceRangeTuple.append([sentenceToCheck.find(typeAxml),sentenceToCheck.find(typeAxml) + len(typeAxml)])
                     xmlTagIndexRangeListOfTuples.append(appearanceRangeTuple)
                 print(f"xmlTagRange: {xmlTagIndexRangeListOfTuples} ")
-                
 
                 grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                 sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
@@ -75,27 +72,36 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                     errorMessageAndOffsetHolderList = []
 
                     for errors in grammarCheckResults:
-
                         startSlice = errors.offset
                         endSlice = errors.offset+errors.errorLength+1
-                        # TO DO: skip error messages in XML tags:
 
-                        for xmlRange in xmlTagIndexRangeListOfTuples:
-                            if len(xmlRange) > 1:
+                        skipError = False #Initiate a skipError variable so that when an error appears in XML, we escape the grammar check process.
+
+                        for xmlRange in xmlTagIndexRangeListOfTuples: #iterating through the sliced strings that are encompassed by XML < > tags.
+                            print(f"xmlTagIndexRangeListOfTuples in XML check: {xmlTagIndexRangeListOfTuples}")
+                            print(f"This is xmlRange: {xmlRange}")
+                            print(f"length of xmlRange: {len(xmlRange)}")
+                            if len(xmlRange) > 0: #BBBBBBBBBBUUUUUUUUUUUUUUUGGGGGGGGGGGGG (Oct 18, 14:12). Update - 0ct 18, 14:22 : Successfully used cockroach spray to kill this FAT Gregor Samsa; all is well.
+                                print(f"Skip error reached here")
                                 for xmlDetailedRange in xmlRange:
                                     if xmlDetailedRange[0] <= startSlice <= xmlDetailedRange[1] and xmlDetailedRange[0] <= endSlice <= xmlDetailedRange[1]:
-                                    # TO DO: October 4, 2024: finish escaping from adding error to list if error appears in XML tag.
-                                    
+                                        print(f"Should be skipped: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}\n\n\n\n\n\n skipped. \n\n\n\n\n\n")
+                                        skipError = True
+                                        break
+                                if skipError == True:
+                                    break
+                        if skipError == True:
+                            break
+
                         checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(sentenceToCheck)])
                         correctionSuggestions = errors.replacements[:6] if len(errors.replacements) > 6 else errors.replacements
                         errorMessageAndOffsetHolderList.append([startSlice, endSlice, correctionSuggestions])
 
-
-                        # print(f"For the entry for the historian {historian}: ")
-                        # print(f"Error sentence: {sentenceToCheck}")
-                        # print(f"Error location: {checkLocationSentence}")
-                        # print(f"The possible replacements are: {errors.replacements}")
-                        # print(f"Error list: {errorMessageAndOffsetHolderList}")
+                        print(f"For the entry for the historian {historian}: ")
+                        print(f"Error sentence: {sentenceToCheck}")
+                        print(f"Error location: {checkLocationSentence}")
+                        print(f"The possible replacements are: {errors.replacements}")
+                        print(f"Error list: {errorMessageAndOffsetHolderList} \n\n\n")
                         
                     sentenceCheckedForEachHistorianDict[sentenceToCheck] = errorMessageAndOffsetHolderList
 
@@ -103,8 +109,8 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
 
             self.errorMessageStorageWithSentenceDict[historian] = sentenceCheckedForEachHistorianDict
 
-        # with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
-        #     json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
+        with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
+            json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
 
                     
     # This helper function is mainly used during code testing to run the entire class object:
