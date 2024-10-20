@@ -28,10 +28,10 @@ class errorCheckWordLevel:
 
     def isForeign(self, word):
         try:
-            detectedlanguage = detect(word)
-            return detectedlanguage != self.foreignLanguage
+            detectedlanguage = detect(word) #check lang
+            return detectedlanguage != self.foreignLanguage #is it not english?
         except:
-            return False
+            return False #the language is english.
         
     
 
