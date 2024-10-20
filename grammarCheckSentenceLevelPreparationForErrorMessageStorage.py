@@ -81,7 +81,7 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                             print(f"xmlTagIndexRangeListOfTuples in XML check: {xmlTagIndexRangeListOfTuples}")
                             print(f"This is xmlRange: {xmlRange}")
                             print(f"length of xmlRange: {len(xmlRange)}")
-                            if len(xmlRange) > 0: #BBBBBBBBBBUUUUUUUUUUUUUUUGGGGGGGGGGGGG (Oct 18, 14:12). Update - 0ct 18, 14:22 : Successfully used cockroach spray to kill this FAT Gregor Samsa; all is well.
+                            if len(xmlRange) > 0:
                                 print(f"Skip error reached here")
                                 for xmlDetailedRange in xmlRange:
                                     if xmlDetailedRange[0] <= startSlice <= xmlDetailedRange[1] and xmlDetailedRange[0] <= endSlice <= xmlDetailedRange[1]:
