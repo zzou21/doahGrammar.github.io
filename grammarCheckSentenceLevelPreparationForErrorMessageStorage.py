@@ -1,9 +1,8 @@
 import language_tool_python, json, re
 from nltk.tokenize import PunktSentenceTokenizer
+from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
-# TO DO: do not forget to add work batch during interface design, so that the system automatically updates the correct dictionary routinely because the user cannot check all errors in one sitting. Could update the correct version dictionary after checking each historian's overview.
-
-# TO DO September 27: ignore grammar check for words inside < >
+# TODO: Oct 25, 2024: add Name Entity Recognition so that the grammar check doesn't think a name is a misspelling.
 
 # json format: dictionary - {"lastName, firstName": [id, "description"]}
 # language_tool_python error output example:
