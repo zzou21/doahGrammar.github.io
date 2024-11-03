@@ -26,14 +26,27 @@ class errorCheckWordLevel:
             singleHistorianSentSegList = [singleSentence for singleSentence in segmentationResult]
             self.DoAHSentSegDict[historianString] = [historianIdInt, singleHistorianSentSegList]
 
-    def isForeign(self, word):
+    def isForeign(self, word): #method to tell if a language is english or not.
         try:
             detectedlanguage = detect(word) #check lang
             return detectedlanguage != self.foreignLanguage #is it not english?
         except:
             return False #the language is english.
         
+    def checkForeignSpelling(self, sentence):
+        grammarCheckerFxn = language_tool_python.LanguageTool(self.foreignLanguage) 
+        # tokenizes words in sentence to find foreign language words
+        words = re.findall(r'\b\w+\b')
+        foreignWords = [word for word in words if word = self.isForeign(word)]
+        
+        foreignErrors = {}
+        for word in foreignWord:
+            matches = grammarCheckerFxn.check(word)
+            if matches:
+                foreignErrors[word] = matches[0].replacements
+        return foreignErrors
     
+
 
         
 
