@@ -3,7 +3,7 @@
         "Americanist art historian; first associate director of the Museum of Modern Art in New York.": [
             [
                 0,
-                12,
+                11,
                 [
                     "Americanism"
                 ]
@@ -13,7 +13,7 @@
         "After attending Dexter High School, Abbott graduated from Bowdin College with a bachelor's degree in science and attended graduate school at Harvard University in physics.": [
             [
                 58,
-                65,
+                64,
                 [
                     "Bowden",
                     "Bowdoin",
@@ -25,37 +25,10 @@
         "At Harvard he met <a href=\"/barra\">Alfred H. Barr, Jr.</a>, who would become the first director of the Museum of Modern Art.": [
             [
                 3,
-                11,
+                10,
                 [
                     "Harvard,"
                 ]
-            ],
-            [
-                21,
-                26,
-                [
-                    "ref",
-                    "pref",
-                    "HEF",
-                    "xref"
-                ]
-            ],
-            [
-                28,
-                34,
-                [
-                    "Barry",
-                    "Barr",
-                    "Barbra",
-                    "Basra",
-                    "Berra",
-                    "barre"
-                ]
-            ],
-            [
-                33,
-                35,
-                []
             ]
         ],
         "Barr and Abbott spent time in Paris studying art.": [],
@@ -77,7 +50,7 @@
         "Psychiatrist and disciple of Freud; earliest scholar to employ psycho-analytic method to an artist (Giovanni Segantini).": [
             [
                 109,
-                119,
+                118,
                 [
                     "Seating",
                     "Semantic",
@@ -96,7 +69,7 @@
         "After graduating in 1901, he took a position initially at an asylum in Berlin and then at the Burghölzi Mental Hospital in Zürich under P. Eugene Bleuler (1857-1939) in 1904.": [
             [
                 94,
-                104,
+                103,
                 [
                     "Bartholdi",
                     "Bungholes",
@@ -105,7 +78,7 @@
             ],
             [
                 146,
-                154,
+                153,
                 [
                     "Euler",
                     "Blender",
@@ -119,7 +92,7 @@
         "He became a devoted Helvetian, embracing mountain climbing and the art of another expatriate to Switzerland, the artist Giovanni Segantini.": [
             [
                 129,
-                139,
+                138,
                 [
                     "Seating",
                     "Semantic",
@@ -135,7 +108,7 @@
         "He married Hedwig Burgner, in 1906.": [
             [
                 18,
-                26,
+                25,
                 [
                     "Burner",
                     "Burger",
@@ -160,7 +133,7 @@
         "His book on Segantini, like Freud's, is more an posthumous psychoanalysis of the artist than the art.": [
             [
                 12,
-                22,
+                21,
                 [
                     "Seating",
                     "Semantic",
@@ -172,7 +145,7 @@
             ],
             [
                 40,
-                59,
+                58,
                 [
                     "a more posthumous"
                 ]
@@ -181,7 +154,7 @@
         "Abraham's theories received renewed interest with the art-historical application of the theories of Jacques Lacan in Lacan's book, <em>The Four Fundamental Concepts of Psycho-Analysis</em>.": [
             [
                 108,
-                114,
+                113,
                 [
                     "Lacey",
                     "Laban",
@@ -192,7 +165,7 @@
             ],
             [
                 117,
-                123,
+                122,
                 [
                     "Lacey",
                     "Laban",

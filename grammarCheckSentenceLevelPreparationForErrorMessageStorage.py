@@ -1,6 +1,9 @@
 import language_tool_python, json, re
 from nltk.tokenize import PunktSentenceTokenizer
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+from langdetect import detect as languageDetection
+from langdetect import detect_langs as languageDetectionProbabilities
+
+# from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
 # TODO: Oct 25, 2024: add Name Entity Recognition so that the grammar check doesn't think a name is a misspelling.
 
@@ -72,19 +75,39 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
 
                     for errors in grammarCheckResults:
                         startSlice = errors.offset
-                        endSlice = errors.offset+errors.errorLength+1
-
+                        endSlice = errors.offset+errors.errorLength
                         skipError = False #Initiate a skipError variable so that when an error appears in XML, we escape the grammar check process.
+                        errorLocationInSentenceToCheck = sentenceToCheck[startSlice:endSlice]
+                        
+                        '''
+                        Attempted at checking language to skip; does not work:
+
+                        errorNER = None
+                        if languageDetection(errorLocationInSentenceToCheck) != "en":
+                            print(f"language detection result: {languageDetection(errorLocationInSentenceToCheck)}")
+                            print(f"probability language: {languageDetectionProbabilities(errorLocationInSentenceToCheck)}")
+                            print(f"non-english error: {errorLocationInSentenceToCheck}")
+                            break'''
+                        
+                        # check if error is in < and >:
+                        if self.inXMLBracket(errorLocationInSentenceToCheck, sentenceToCheck) == True:
+                            break
 
                         for xmlRange in xmlTagIndexRangeListOfTuples: #iterating through the sliced strings that are encompassed by XML < > tags.
                             print(f"xmlTagIndexRangeListOfTuples in XML check: {xmlTagIndexRangeListOfTuples}")
                             print(f"This is xmlRange: {xmlRange}")
+                            print(f"Content of XML range: {sentenceToCheck[xmlRange[0][0]:xmlRange[0][1]]}")
                             print(f"length of xmlRange: {len(xmlRange)}")
                             if len(xmlRange) > 0:
                                 print(f"Skip error reached here")
                                 for xmlDetailedRange in xmlRange:
+                                    errorInXMLTag = False
+
+                                    print(f"Error should be skipped?: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}")
                                     if xmlDetailedRange[0] <= startSlice <= xmlDetailedRange[1] and xmlDetailedRange[0] <= endSlice <= xmlDetailedRange[1]:
                                         print(f"Should be skipped: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}\n\n\n\n\n\n skipped. \n\n\n\n\n\n")
+                                        errorInXMLTag = True
+                                    if errorInXMLTag == True:
                                         skipError = True
                                         break
                                 if skipError == True:
@@ -111,7 +134,19 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
         with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
             json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
 
-                    
+    def inXMLBracket(self, errorLocationInSentenceToCheck, sentenceToCheck):
+        # Checks if a spotted error is in an XML < > pair. If the error is in the bracket pair, it would return True. If not, return False.
+        appearancesOfXMLBracketList = re.findall(r"<(.*?)>", sentenceToCheck)
+        print(f"content in XML brackets: {appearancesOfXMLBracketList}")
+        appearanceOfErrorInXMLBracketInt = 0
+        for bracketPairs in appearancesOfXMLBracketList:
+            if errorLocationInSentenceToCheck in bracketPairs:
+                appearanceOfErrorInXMLBracketInt += 1
+        if appearanceOfErrorInXMLBracketInt == 0:
+            return False
+        else:
+            return True
+        
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
         # self.processJsonUnsegmented()
@@ -126,8 +161,8 @@ if __name__ == "__main__":
     doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentSentSegmentedJSON.json"
     # doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
 
-    smallScaleTestJson = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
-    errorMessageStorage = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
+    smallScaleTestJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
+    errorMessageStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
 
     grammarCheckSentenceLevelMachine = grammarCheckSentenceLevelPreparationForErrorMessageStorage(doAHContentJsonFile, nameDictionary, errorMessageStorage, smallScaleTestJson)
 

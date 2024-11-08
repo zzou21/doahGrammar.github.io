@@ -5,14 +5,27 @@ import json
 class grammarCheckSentenceLevelRevisionInterface:
     def __init__ (self, errorMessageStorageJson):
         self.errorMessageStorageJson = errorMessageStorageJson
+        self.storageOfCorrectedWriting = {}
 
     def readSentenceLevelErrorStorageAndDisplayInterface(self):
         with open(self.errorMessageStorageJson, "r") as errorMessageStorageContent:
             errorMessageStorageOpenDict = json.load(errorMessageStorageContent)
-        totalNumOfErrorsInt = sum([len(errorMessage) for errorMessageDict in errorMessageStorageOpenDict.values() for errorMessage in errorMessageDict.values() if errorMessage]) # this tracks how many total errors were stored in self.errorMessageStorageJson 
+        totalNumOfErrorsInt = sum([len(errorMessage) for errorMessageDict in errorMessageStorageOpenDict.values() for errorMessage in errorMessageDict.values() if errorMessage]) # this tracks how many total errors
+        
+        outerDictionaryList0thIndexHistorian = self.turnDictToMultiList(errorMessageStorageOpenDict)
+        
+        print(outerDictionaryList0thIndexHistorian)
+        '''--------
+        Udpates from Nov 8:
+        stopped using a dictionary as an iterator. changed to multi-layer nested list stored in "outerDictionaryList0thIndexHistorian". Run and print "outerDictionaryList0thIndexHistorian" before next edit. We are using a list format so that we could for loop index iteration through it to ensure that we could implement the function of going back to a previous error check.
+        
+        Rewrite the iterators below according to the multi-layer nested list format rather than a nested dictionary.
+        '''
+
 
         for historian, errorMessageDict in errorMessageStorageOpenDict.items():
-            print(historian)
+            if historian not in self.storageOfCorrectedWriting:
+                self.storageOfCorrectedWriting[historian] = []
             for originalSentence, errorMessage in errorMessageDict.items():
                 if errorMessage:
                     for oneError in errorMessage:
@@ -37,6 +50,7 @@ class grammarCheckSentenceLevelRevisionInterface:
                         while True:
                             try:
                                 userRevisionSelection = input("Select the revision number to implement. Only input numbers: ")
+                                
                                 userSelectionRevisionSuggestionIndexInt = int(userRevisionSelection)
                                 userSelectedRevisionChoiceString = correctionRecommendations[userSelectionRevisionSuggestionIndexInt - 1]
                             except ValueError:
@@ -49,18 +63,25 @@ class grammarCheckSentenceLevelRevisionInterface:
 
                                 revisedSentence = originalSentence[:startSlice] + userSelectedRevisionChoiceString + " " + originalSentence[endSlice:]
                                 print(f"Revised sentence->>{revisedSentence}")
-            # TO DO from September 27: finish implementing the interface and store the corrected sentences in a dictionary. Add the feature where the user could take a break from editing. Add the feature if user doesn't see what they want to edit. Add the feature where the user wants to go back.
+                                # TO DO from September 27: finish implementing the interface and store the corrected sentences in a dictionary. Add the feature where the user could take a break from editing. Add the feature if user doesn't see what they want to edit. Add the feature where the user wants to go back.
                                 break
-
-
-
                         print(type(userRevisionSelection))
                         print(userRevisionSelection)
+
+                else:
+                    self.storageOfCorrectedWriting[historian].append(originalSentence)
+
+    def turnDictToMultiList(self, errorMessageStorageOpenDict):
+        outerDictionaryTuple0thIndexHistorian = list(errorMessageStorageOpenDict.items()) #[(historian, {content}), (historian, {content})]
+        outerDictionaryList0thIndexHistorian = [list(pair) for pair in outerDictionaryTuple0thIndexHistorian] #[[historian, {content}], [historian, {content}]]
+        for index in range(len(outerDictionaryList0thIndexHistorian)):
+            outerDictionaryList0thIndexHistorian[index][1] = [list(pair) for pair in list(outerDictionaryList0thIndexHistorian[index][1].items())]
+        return outerDictionaryList0thIndexHistorian
 
     def operations(self):
         self.readSentenceLevelErrorStorageAndDisplayInterface()
 
 if __name__ == "__main__":
-    errorMessageStorageJson = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
+    errorMessageStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
     sentenceLevelRevisionInterface = grammarCheckSentenceLevelRevisionInterface(errorMessageStorageJson)
     sentenceLevelRevisionInterface.operations()
