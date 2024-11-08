@@ -12,11 +12,11 @@ class grammarCheckSentenceLevelRevisionInterface:
             errorMessageStorageOpenDict = json.load(errorMessageStorageContent)
         totalNumOfErrorsInt = sum([len(errorMessage) for errorMessageDict in errorMessageStorageOpenDict.values() for errorMessage in errorMessageDict.values() if errorMessage]) # this tracks how many total errors
         
-        outerDictionaryList0thIndexHistorian = self.turnDictToMultiList(errorMessageStorageOpenDict)
+        outerDictionaryList0thIndexHistorian = self.turnDictToMultiList(errorMessageStorageOpenDict)  #Data structure: [[historian, [[sentence, [[startSlice, endSlice, [correctionSuggestion]]]], [sentence, []]], [historian, [[sentence, [error]], [sentence, [error]]]].
         
         print(outerDictionaryList0thIndexHistorian)
         '''--------
-        Udpates from Nov 8:
+        Udpates from Nov 8, 2024:
         stopped using a dictionary as an iterator. changed to multi-layer nested list stored in "outerDictionaryList0thIndexHistorian". Run and print "outerDictionaryList0thIndexHistorian" before next edit. We are using a list format so that we could for loop index iteration through it to ensure that we could implement the function of going back to a previous error check.
         
         Rewrite the iterators below according to the multi-layer nested list format rather than a nested dictionary.
