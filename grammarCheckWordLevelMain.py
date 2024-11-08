@@ -34,19 +34,18 @@ class errorCheckWordLevel:
             return False #the language is english.
         
     def checkForeignSpelling(self, sentence):
-        grammarCheckerFxn = language_tool_python.LanguageTool(self.foreignLanguage) 
+        spellCheckerFxn = language_tool_python.LanguageTool(self.foreignLanguage) 
         # tokenizes words in sentence to find foreign language words
         words = re.findall(r'\b\w+\b')
-        foreignWords = [word for word in words if word = self.isForeign(word)]
+        foreignWords = [word for word in words if self.isForeign(word)] #list of words that are foreign
         
-        foreignErrors = {}
-        for word in foreignWord:
-            matches = grammarCheckerFxn.check(word)
+        foreignErrors = {} #dictionary of foreignerrors and possible replacements.
+        for word in foreignWords:
+            matches = spellCheckerFxn.check(word)
             if matches:
                 foreignErrors[word] = matches[0].replacements
         return foreignErrors
     
-
-
-        
-
+    def operations(self):
+        self.processJson()
+        self.sentenceSegmentation()
