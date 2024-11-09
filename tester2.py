@@ -35,5 +35,7 @@
 #     print(dictionary)
 
 lst = [(9, 0), (3, 4), (5, 6)]
-newList = [list(tuple) for tuple in lst]
-print(newList)
+print(range(1, len(lst) + 1))
+
+if 4 in range(1, len(lst) + 1):
+    print("yes")

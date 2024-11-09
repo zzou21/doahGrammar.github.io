@@ -1,8 +1,8 @@
 import language_tool_python, json, re
 from nltk.tokenize import PunktSentenceTokenizer
-from langdetect import detect as languageDetection
-from langdetect import detect_langs as languageDetectionProbabilities
 
+# from langdetect import detect as languageDetection
+# from langdetect import detect_langs as languageDetectionProbabilities
 # from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
 # TODO: Oct 25, 2024: add Name Entity Recognition so that the grammar check doesn't think a name is a misspelling.
@@ -168,14 +168,3 @@ if __name__ == "__main__":
 
     grammarCheckSentenceLevelMachine.operations()
     # print(grammarCheckSentenceLevelMachine.errorMessageStorageWithSentenceDict)
-
-#-----------------
-
-# grammarChecker = language_tool_python.LanguageTool("en-US")
-# sentences = [sentence1, sentence2, sentence3]
-
-# for sentenceCount, sentenceToCheck in enumerate(sentences, start=1):
-#     results = grammarChecker.check(sentenceToCheck)
-#     print(f"Error for sentence # {sentenceCount} -- {sentenceToCheck}:")
-#     for individualError in results:
-#         print(f"RuleId: {individualError.replacements[0]}")

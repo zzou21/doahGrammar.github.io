@@ -1,5 +1,4 @@
 import json
-         #to do after 9/21/2024: finish interface and .correct() method by pulling error messages from doahGrammarErrorStorage.json and manipulating the content.
 
 # This class objects takes in the message error storage and deploys the correction user interface.
 class grammarCheckSentenceLevelRevisionInterface:
@@ -24,14 +23,15 @@ class grammarCheckSentenceLevelRevisionInterface:
         
         Rewrite the iterators below according to the multi-layer nested list format rather than a nested dictionary.
         '''
+        revisedContentStorageDictionary = {}
         totalErrorsRemaining = self.totalNumOfErrorsInt
         errorsCorrectedInOneSessionCount = 0
         print(f"--------Begins Error Correction Interface--------\n\n")
         for historianIndex in range(len(outerDictionaryList0thIndexHistorian)): # "historianIndex" tracks which historian the user is currently iterating through. Format for outerDictionaryList0thIndexHistorian[historianIndex]: ["Name, Historian", [["sentence", ["errors"]], ["sentence", ["errors"]]]
             historianBeingEditedString = outerDictionaryList0thIndexHistorian[historianIndex][0]
             # print(f"Currently editing the entry for: {historianBeingEditedString}")
-            if outerDictionaryList0thIndexHistorian[historianIndex][0] not in self.storageOfCorrectedWriting:
-                self.storageOfCorrectedWriting[historianBeingEditedString] = []
+            if outerDictionaryList0thIndexHistorian[historianIndex][0] not in revisedContentStorageDictionary:
+                revisedContentStorageDictionary[historianBeingEditedString] = []
             temporaryHistorianEntryContentPointer = outerDictionaryList0thIndexHistorian[historianIndex][1]
             for sentenceErrorPairListIndex in range(len(temporaryHistorianEntryContentPointer)):
                 #print(f"each sentence error pair: {temporaryHistorianEntryContentPointer[sentenceErrorPairListIndex]}")
@@ -45,85 +45,67 @@ class grammarCheckSentenceLevelRevisionInterface:
                         # print(f"This is error message: {temporaryStorageOneErrorList}")
                         startSlice = temporaryStorageOneErrorList[0]
                         endSlice = temporaryStorageOneErrorList[1]
-                        correctionRecommendations = temporaryStorageOneErrorList[2]
+                        correctionRecommendationsList = temporaryStorageOneErrorList[2]
                         checkErrorLocationInOriginalSentenceString = "".join([letter if startSlice <= letterIndexCount < endSlice else "." for letterIndexCount, letter in enumerate(originalSentence)])
 
                         #Start of interface
                         print(f"Number of errors at th beginning of session: {totalErrorsRemaining}")
-                        # while totalErrorsRemaining > 0:
                         print(f"\n\n>>>>>> New Error Correction Window. Corrected {errorsCorrectedInOneSessionCount} errors in this session.")
                         print(f"Remaining errors to correct: {totalErrorsRemaining}")
                         print(f"---------Sentence and error to correct---------")
                         print(originalSentence)
                         print(checkErrorLocationInOriginalSentenceString)
                         print(f"Revision Recommendations:")
-                        for countOfRecommendation, revisionRecommendation in enumerate(correctionRecommendations):
-                            print(f"{countOfRecommendation + 1} ---- {revisionRecommendation}")
+                        for countOfRecommendation, revisionRecommendationString in enumerate(correctionRecommendationsList):
+                            print(f"{countOfRecommendation + 1} ---- {revisionRecommendationString}")
+                        
+                        class emptySelectionError(Exception): # To prevent users from selecting a number not provided
+                            pass
+                        class returnToPrevious(Exception): # This triggers interface to return to a previous error message display
+                            pass
+                        class manualEdit(Exception): # This triggers interface to allow users to manually enter an edit
+                            pass
+                        class quitEditing(Exception): # This allows users to exit the interface
+                            pass
+
                         while True:
                             try:
-                                userSelectionOfRecommendationIndex = int(input("Select the revision number to implement. Only input numbers: "))
-                                userSelectionOfRecommendationContentString = revisionRecommendation[userSelectionOfRecommendationIndex]
+                                userSelectionOfRecommendationIndex = input("Select the revision number to implement by inputting ONLY numbers. \nTo return to a previous revision, type 'up'\nTo manually enter an edit, type 'edit'\nTo save progress and quit, type 'quit': ")
+                                if userSelectionOfRecommendationIndex not in range(1, len(correctionRecommendationsList) + 1):
+                                    raise emptySelectionError
+                                if userSelectionOfRecommendationIndex == "up":
+                                    raise returnToPrevious
+                                if userSelectionOfRecommendationIndex == "edit":
+                                    raise manualEdit
+                                if userSelectionOfRecommendationIndex == "quit":
+                                    raise quitEditing
+                                userSelectionOfRecommendationContentString = correctionRecommendationsList[userSelectionOfRecommendationIndex - 1]
                             except ValueError:
                                 print(f"Please type a numerical value.")
                             except IndexError:
-                                print(f"Please type a number listed above.")
+                                print(f"Please type a numerical selection listed above.")
+                            except emptySelectionError:
+                                print(f"Please type a numerical selection listed above.")
+                            except returnToPrevious: # TODO in progress 11/9/2024
+                                if totalErrorsRemaining == self.totalNumOfErrorsInt:
+                                    print("This is the first error being corrected.")
+                                # else:
+                                # TODO in progress 11/9/2024 
+                                    
+                            except manualEdit:# TODO in progress 11/9/2024
+                                pass
+                            except quitEditing:# TODO in progress 11/9/2024
+                                pass #placeholder. Function in progress
                             else:
                                 revisedSentence = originalSentence[:startSlice] + userSelectionOfRecommendationContentString + " " + originalSentence[endSlice:]
                                 print(f"Revised sentence->>\n{revisedSentence}")
+                                revisedContentStorageDictionary[historianBeingEditedString].append(revisedSentence)
                                 break
-                            
+                        
                         totalErrorsRemaining -= 1
                         errorsCorrectedInOneSessionCount += 1
-                        print(f"All errors corrected.")
-                        # print(f"while loop count: {whileLoopCount}")
-
-        # for historian, errorMessageDict in errorMessageStorageOpenDict.items():
-        #     if historian not in self.storageOfCorrectedWriting:
-        #         self.storageOfCorrectedWriting[historian] = []
-        #     for originalSentence, errorMessage in errorMessageDict.items():
-        #         if errorMessage:
-        #             for oneError in errorMessage:
-        #                 print(f"This is errorMessage: {errorMessage}")
-        #                 #errorMessage format: type - list; [startSlice, endSlide, ["suggestions for change"]]
-        #                 startSlice = oneError[0]
-        #                 endSlice = oneError[1]
-        #                 correctionRecommendations = oneError[2]
-        #                 checkLocationSentence = "".join([letter if startSlice <= count < endSlice else "." for count, letter in enumerate(originalSentence)])
-
-        #                 #interface:
-        #                 #for errorCount in range(totalNumOfErrorsInt):
-        #                 print(f"\n>>>>>>> New revision session:")
-        #                 #print(f"Currently at error {errorCount + 1} of {totalNumOfErrorsInt}  errors in this revision iteration.")
-        #                 print(f"------Sentence and error to revise------\n")
-        #                 print(originalSentence)
-        #                 print(checkLocationSentence)
-        #                 print("\n")
-        #                 print("------Revision Suggestions------\n")
-        #                 for numberOfSuggestion, suggestedChange in enumerate(correctionRecommendations):
-        #                     print(f"{numberOfSuggestion + 1} --- {suggestedChange}")
-        #                 while True:
-        #                     try:
-        #                         userRevisionSelection = input("Select the revision number to implement. Only input numbers: ")
-                                
-        #                         userSelectionRevisionSuggestionIndexInt = int(userRevisionSelection)
-        #                         userSelectedRevisionChoiceString = correctionRecommendations[userSelectionRevisionSuggestionIndexInt - 1]
-        #                     except ValueError:
-        #                         print("Please type a numerical value.")
-        #                     except IndexError:
-        #                         print("Please type a numerical value provided above.")
-        #                     else:
-        #                         print(f"This works: {userSelectionRevisionSuggestionIndexInt}")
-        #                         print(correctionRecommendations)
-
-        #                         revisedSentence = originalSentence[:startSlice] + userSelectedRevisionChoiceString + " " + originalSentence[endSlice:]
-        #                         print(f"Revised sentence->>{revisedSentence}")
-        #                         # TO DO from September 27: finish implementing the interface and store the corrected sentences in a dictionary. Add the feature where the user could take a break from editing. Add the feature if user doesn't see what they want to edit. Add the feature where the user wants to go back.
-        #                         break
-        #                 print(type(userRevisionSelection))
-        #                 print(userRevisionSelection)
-
-        #         else:
-        #             self.storageOfCorrectedWriting[historian].append(originalSentence)
+                else:
+                    revisedContentStorageDictionary[historianBeingEditedString].append(originalSentence)
 
     def turnDictToMultiList(self, errorMessageStorageOpenDict):
         outerDictionaryTuple0thIndexHistorian = list(errorMessageStorageOpenDict.items()) #[(historian, {content}), (historian, {content})]
@@ -131,7 +113,7 @@ class grammarCheckSentenceLevelRevisionInterface:
         for index in range(len(outerDictionaryList0thIndexHistorian)):
             outerDictionaryList0thIndexHistorian[index][1] = [list(pair) for pair in list(outerDictionaryList0thIndexHistorian[index][1].items())]
         return outerDictionaryList0thIndexHistorian
-
+    
     def operations(self):
         self.displayInterface()
 
