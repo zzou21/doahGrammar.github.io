@@ -34,8 +34,8 @@
 # for dictionary in list:
 #     print(dictionary)
 
-lst = [(9, 0), (3, 4), (5, 6)]
-print(range(1, len(lst) + 1))
+# lst = [(9, 0), (3, 4), (5, 6)]
+# print(range(1, len(lst) + 1))
 
-if 4 in range(1, len(lst) + 1):
-    print("yes")
+# if 4 in range(1, len(lst) + 1):
+#     print("yes")

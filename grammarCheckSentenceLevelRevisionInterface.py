@@ -1,4 +1,8 @@
-import json
+import json, os
+from datetime import date
+
+# TODO November 15: after line 132 breaks out of the while loop, still need to write program to end the system at large.
+
 
 # This class objects takes in the message error storage and deploys the correction user interface.
 class grammarCheckSentenceLevelRevisionInterface:
@@ -68,17 +72,20 @@ class grammarCheckSentenceLevelRevisionInterface:
                         class quitEditing(Exception): # This allows users to exit the interface
                             pass
 
-                        while True:
+                        interfaceManualEditBreak = True # To break out of the while loop if the user is finished with manual edit input, since the manual edit contains an inner while loop.
+                        quitEditingBreakBoolean = True
+                        while interfaceManualEditBreak == True and quitEditingBreakBoolean == True:
                             try:
-                                userSelectionOfRecommendationIndex = input("Select the revision number to implement by inputting ONLY numbers. \nTo return to a previous revision, type 'up'\nTo manually enter an edit, type 'edit'\nTo save progress and quit, type 'quit': ")
-                                if userSelectionOfRecommendationIndex not in range(1, len(correctionRecommendationsList) + 1):
-                                    raise emptySelectionError
+                                userSelectionOfRecommendationIndex = input("Select the revision number to implement by inputting ONLY numbers. To return to a previous revision, type 'up'. To manually enter an edit, type 'edit.' To save progress and quit, type 'quit': ")
                                 if userSelectionOfRecommendationIndex == "up":
                                     raise returnToPrevious
-                                if userSelectionOfRecommendationIndex == "edit":
+                                elif userSelectionOfRecommendationIndex == "edit":
                                     raise manualEdit
-                                if userSelectionOfRecommendationIndex == "quit":
+                                elif userSelectionOfRecommendationIndex == "quit":
                                     raise quitEditing
+                                userSelectionOfRecommendationIndex = int(userSelectionOfRecommendationIndex)
+                                if userSelectionOfRecommendationIndex not in range(1, len(correctionRecommendationsList) + 1):
+                                    raise emptySelectionError
                                 userSelectionOfRecommendationContentString = correctionRecommendationsList[userSelectionOfRecommendationIndex - 1]
                             except ValueError:
                                 print(f"Please type a numerical value.")
@@ -92,21 +99,65 @@ class grammarCheckSentenceLevelRevisionInterface:
                                 # else:
                                 # TODO in progress 11/9/2024 
                                     
-                            except manualEdit:# TODO in progress 11/9/2024
-                                pass
+                            except manualEdit:
+                                while True:
+                                    print(originalSentence)
+                                    print(checkErrorLocationInOriginalSentenceString)
+                                    userInputManualEdit = input("Please type in your preferred edit: ")
+                                    previewRevisedManualEditSentence = originalSentence[:startSlice] + userInputManualEdit + originalSentence[endSlice:]
+                                    print(f"Is this your preferred edit? --> {previewRevisedManualEditSentence}")
+                                    userPreviewReaction = input("Type:\n'y' for yes;\n'n' for no;\n'r' to retype the sentence: ")
+                                    if userPreviewReaction == "y":
+                                        print(">> Manual edit uploaded.")
+                                        revisedContentStorageDictionary[historianBeingEditedString].append(previewRevisedManualEditSentence)
+                                        readyForNextError = input("Hit 'return' (or 'enter') key to go to next error: ")
+                                        if readyForNextError == "":
+                                            interfaceManualEditBreak = False
+                                            break
+                                    elif userPreviewReaction == "n":
+                                        continue
+                                    elif userPreviewReaction == "r":
+                                        print(f"Old sentence: {originalSentence}")
+                                        previewRevisedManualEditSentence = input("Type the new sentence exactly as you like to appear. Hit 'return' (or 'enter') key to finish writing and upload:\n")
+                                        print(f"New Sentence --> {previewRevisedManualEditSentence}")
+
+                                        revisedContentStorageDictionary[historianBeingEditedString].append(previewRevisedManualEditSentence)
+                                        readyForNextError = input("Hit 'return' (or 'enter') key to go to next error: ")
+                                        if readyForNextError == "":
+                                            interfaceManualEditBreakBoolean = False
+                                            break
+                                    else:
+                                        print(f"Please type a valid input.")
                             except quitEditing:# TODO in progress 11/9/2024
-                                pass #placeholder. Function in progress
+                                while True:
+                                    readyForNextError = input("Hit 'return' (or 'enter') key to store your progress so far in a JSON file: ")
+                                    if readyForNextError == "":
+                                        self.storeRevisedSentencesFile(revisedContentStorageDictionary)
+                                        quitEditingBreakBoolean = False
+                                        break
+                                    else:
+                                        print(f"Be sure you are hitting 'return' (or 'enter') key to store your progress.")
                             else:
-                                revisedSentence = originalSentence[:startSlice] + userSelectionOfRecommendationContentString + " " + originalSentence[endSlice:]
+                                revisedSentence = originalSentence[:startSlice] + userSelectionOfRecommendationContentString + originalSentence[endSlice:]
                                 print(f"Revised sentence->>\n{revisedSentence}")
                                 revisedContentStorageDictionary[historianBeingEditedString].append(revisedSentence)
-                                break
+                                readyForNextError = input("Hit 'return' (or 'enter') key to go to next error: ")
+                                if readyForNextError == "":
+                                    break
                         
                         totalErrorsRemaining -= 1
                         errorsCorrectedInOneSessionCount += 1
                 else:
                     revisedContentStorageDictionary[historianBeingEditedString].append(originalSentence)
 
+
+    def storeRevisedSentencesFile(self, revisedSentencesDictionary): # This function stores revised sentences into a JSON and a TXT file.
+        dateToday = str(date.today())
+        revisedStorageJsonFileName = "unfinishedRevisedDictionaryErrors" + dateToday + ".json"
+        with open(revisedStorageJsonFileName, "w") as revisedJsonStorageFile:
+            json.dump(revisedSentencesDictionary, revisedJsonStorageFile, indent = 4)
+        
+        
     def turnDictToMultiList(self, errorMessageStorageOpenDict):
         outerDictionaryTuple0thIndexHistorian = list(errorMessageStorageOpenDict.items()) #[(historian, {content}), (historian, {content})]
         outerDictionaryList0thIndexHistorian = [list(pair) for pair in outerDictionaryTuple0thIndexHistorian] #[[historian, {content}], [historian, {content}]]
@@ -118,8 +169,8 @@ class grammarCheckSentenceLevelRevisionInterface:
         self.displayInterface()
 
 if __name__ == "__main__":
-    #errorMessageStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
-    errorMessageStorageJson = "C:/Users/zz341/Desktop/doahGrammar/doahGrammarErrorStorage.json"
+    errorMessageStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
+    # errorMessageStorageJson = "C:/Users/zz341/Desktop/doahGrammar/doahGrammarErrorStorage.json"
 
     sentenceLevelRevisionInterface = grammarCheckSentenceLevelRevisionInterface(errorMessageStorageJson)
     sentenceLevelRevisionInterface.operations()
