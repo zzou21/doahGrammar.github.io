@@ -26,26 +26,38 @@ class errorCheckWordLevel:
             singleHistorianSentSegList = [singleSentence for singleSentence in segmentationResult]
             self.DoAHSentSegDict[historianString] = [historianIdInt, singleHistorianSentSegList]
 
-    def isForeign(self, word): #method to tell if a language is english or not.
+    def isForeign(self, word): #method to tell if a language is english or not, used as a helper for checkForeignSpelling
         try:
             detectedlanguage = detect(word) #check lang
             return detectedlanguage != self.foreignLanguage #is it not english?
         except:
             return False #the language is english.
         
-    def checkForeignSpelling(self, sentence):
+    def checkForeignSpelling(self):
         spellCheckerFxn = language_tool_python.LanguageTool(self.foreignLanguage) 
         # tokenizes words in sentence to find foreign language words
         words = re.findall(r'\b\w+\b')
         foreignWords = [word for word in words if self.isForeign(word)] #list of words that are foreign
         
-        foreignErrors = {} #dictionary of foreignerrors and possible replacements.
+        foreignErrors = {} #dictionary of foreign spelling errors and possible replacements.
         for word in foreignWords:
             matches = spellCheckerFxn.check(word)
             if matches:
                 foreignErrors[word] = matches[0].replacements
         return foreignErrors
     
+    ## need to verify foreignSPelling works.
+
+    #write a method to check if names are spelled correctly. Looking thru names of people already in dict,
+    # but also needs to look at artists, etc.
+
+
     def operations(self):
         self.processJson()
         self.sentenceSegmentation()
+
+if __name__ == "__main__":
+    doAHContentJsonFile = "/Users/petershum/Coding/doahGrammar/doahContentJSON.json"
+    nameDictionary = "/Users/petershum/Coding/doahGrammar/historianNames.json"
+
+    doAHContentSentSegJsonFile = "/Users/petershum/Coding/doahGrammar/doahContentSentSegmentedJSON.json"
