@@ -46,10 +46,13 @@ class errorCheckWordLevel:
                 foreignErrors[word] = matches[0].replacements
         return foreignErrors
     
-    ## need to verify foreignSPelling works.
+    ## need to verify foreignspelling works.
 
     #write a method to check if names are spelled correctly. Looking thru names of people already in dict,
     # but also needs to look at artists, etc.
+    def nameCheck(self, maneDictionary):
+        for (id, name) in nameDictionary:
+            
 
 
     def operations(self):
