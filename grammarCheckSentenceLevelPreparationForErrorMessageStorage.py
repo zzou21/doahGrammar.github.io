@@ -5,8 +5,6 @@ from nltk.tokenize import PunktSentenceTokenizer
 # from langdetect import detect_langs as languageDetectionProbabilities
 # from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
-# TODO: Oct 25, 2024: add Name Entity Recognition so that the grammar check doesn't think a name is a misspelling.
-
 # json format: dictionary - {"lastName, firstName": [id, "description"]}
 # language_tool_python error output example:
     # output = [Match({'ruleId': 'PERS_PRONOUN_AGREEMENT', 'message': 'Did you mean “am” or “will be”?', 'replacements': ['am', 'will be'], 'offsetInContext': 2, 'context': 'I is eating lunch.', 'offset': 2, 'errorLength': 2, 'category': 'GRAMMAR', 'ruleIssueType': 'grammar', 'sentence': 'I is eating lunch.'})]
