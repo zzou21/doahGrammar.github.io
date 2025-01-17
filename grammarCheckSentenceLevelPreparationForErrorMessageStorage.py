@@ -49,11 +49,11 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
         for historian, IdOverviewSegmentedList in self.DoAHSentSegDict.items():
             sentenceCheckedForEachHistorianDict = {}
             for sentenceToCheck in IdOverviewSegmentedList:
-                print(sentenceToCheck)
+                # print(sentenceToCheck)
                 # Checking for XML locations:
                 xmlRegexPattern = r"<em>(.*?)</em>|<a.*?>(.*?)</a>"
                 appearances = re.findall(xmlRegexPattern, sentenceToCheck)
-                print(f"Appearance of XML: {appearances}")
+                # print(f"Appearance of XML: {appearances}")
                 xmlTagIndexRangeListOfTuples = [] #type: [[[indexEMStart, indexEMEnd], [indexAStart, indexAEnd]], [indexEMStart, indexEMEnd], [indexAStart, indexAEnd]]
 
                 for xmlAppearance in appearances:
@@ -64,7 +64,7 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                     if  typeAxml:
                         appearanceRangeTuple.append([sentenceToCheck.find(typeAxml),sentenceToCheck.find(typeAxml) + len(typeAxml)])
                     xmlTagIndexRangeListOfTuples.append(appearanceRangeTuple)
-                print(f"xmlTagRange: {xmlTagIndexRangeListOfTuples} ")
+                # print(f"xmlTagRange: {xmlTagIndexRangeListOfTuples} ")
 
                 grammarCheckResults = grammarCheckerFunction.check(sentenceToCheck)
                 sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
@@ -92,18 +92,18 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                             break
 
                         for xmlRange in xmlTagIndexRangeListOfTuples: #iterating through the sliced strings that are encompassed by XML < > tags.
-                            print(f"xmlTagIndexRangeListOfTuples in XML check: {xmlTagIndexRangeListOfTuples}")
-                            print(f"This is xmlRange: {xmlRange}")
-                            print(f"Content of XML range: {sentenceToCheck[xmlRange[0][0]:xmlRange[0][1]]}")
-                            print(f"length of xmlRange: {len(xmlRange)}")
+                            # print(f"xmlTagIndexRangeListOfTuples in XML check: {xmlTagIndexRangeListOfTuples}")
+                            # print(f"This is xmlRange: {xmlRange}")
+                            # print(f"Content of XML range: {sentenceToCheck[xmlRange[0][0]:xmlRange[0][1]]}")
+                            # print(f"length of xmlRange: {len(xmlRange)}")
                             if len(xmlRange) > 0:
-                                print(f"Skip error reached here")
+                                # print(f"Skip error reached here")
                                 for xmlDetailedRange in xmlRange:
                                     errorInXMLTag = False
 
-                                    print(f"Error should be skipped?: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}")
+                                    # print(f"Error should be skipped?: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}")
                                     if xmlDetailedRange[0] <= startSlice <= xmlDetailedRange[1] and xmlDetailedRange[0] <= endSlice <= xmlDetailedRange[1]:
-                                        print(f"Should be skipped: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}\n\n\n\n\n\n skipped. \n\n\n\n\n\n")
+                                        # print(f"Should be skipped: {sentenceToCheck[xmlDetailedRange[0]:xmlDetailedRange[1]]}\n\n\n\n\n\n skipped. \n\n\n\n\n\n")
                                         errorInXMLTag = True
                                     if errorInXMLTag == True:
                                         skipError = True
@@ -117,17 +117,18 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
                         correctionSuggestions = errors.replacements[:6] if len(errors.replacements) > 6 else errors.replacements
                         errorMessageAndOffsetHolderList.append([startSlice, endSlice, correctionSuggestions])
 
-                        print(f"For the entry for the historian {historian}: ")
-                        print(f"Error sentence: {sentenceToCheck}")
-                        print(f"Error location: {checkLocationSentence}")
-                        print(f"The possible replacements are: {errors.replacements}")
-                        print(f"Error list: {errorMessageAndOffsetHolderList} \n\n\n")
+                        # print(f"For the entry for the historian {historian}: ")
+                        # print(f"Error sentence: {sentenceToCheck}")
+                        # print(f"Error location: {checkLocationSentence}")
+                        # print(f"The possible replacements are: {errors.replacements}")
+                        # print(f"Error list: {errorMessageAndOffsetHolderList} \n\n\n")
                         
                     sentenceCheckedForEachHistorianDict[sentenceToCheck] = errorMessageAndOffsetHolderList
 
                 else: sentenceCheckedForEachHistorianDict[sentenceToCheck] = []
 
             self.errorMessageStorageWithSentenceDict[historian] = sentenceCheckedForEachHistorianDict
+            print(f"Finished checking entry: {historian}")
 
         with open(self.errorMessageStorageJson, "w", encoding="utf-8") as file:
             json.dump(self.errorMessageStorageWithSentenceDict, file, ensure_ascii=False, indent=4)
@@ -135,7 +136,7 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
     def inXMLBracket(self, errorLocationInSentenceToCheck, sentenceToCheck):
         # Checks if a spotted error is in an XML < > pair. If the error is in the bracket pair, it would return True. If not, return False.
         appearancesOfXMLBracketList = re.findall(r"<(.*?)>", sentenceToCheck)
-        print(f"content in XML brackets: {appearancesOfXMLBracketList}")
+        # print(f"content in XML brackets: {appearancesOfXMLBracketList}")
         appearanceOfErrorInXMLBracketInt = 0
         for bracketPairs in appearancesOfXMLBracketList:
             if errorLocationInSentenceToCheck in bracketPairs:
@@ -148,21 +149,22 @@ class grammarCheckSentenceLevelPreparationForErrorMessageStorage:
     # This helper function is mainly used during code testing to run the entire class object:
     def operations(self):
         # self.processJsonUnsegmented()
+        # # self.sentenceSegmentation()
+
         self.processJsonSegmented()
-        # self.sentenceSegmentation()
         self.sentenceGrammarCheck()
 
 if __name__ == "__main__":
     doAHContentJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
     nameDictionary = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/historianNames.json"
 
-    doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentSentSegmentedJSON.json"
+    doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahContentSentSegmentedJSON.json"
     # doAHContentSentSegmentedJsonFile = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
 
     smallScaleTestJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/smalldoahContentSegmentedWithoutIDNumber.json"
-    errorMessageStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorage.json"
+    errorMessageStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/doahGrammarErrorStorageFullDictJan172025.json"
 
-    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevelPreparationForErrorMessageStorage(doAHContentJsonFile, nameDictionary, errorMessageStorage, smallScaleTestJson)
+    grammarCheckSentenceLevelMachine = grammarCheckSentenceLevelPreparationForErrorMessageStorage(doAHContentJsonFile, nameDictionary, errorMessageStorage, doAHContentSentSegmentedJsonFile)
 
     grammarCheckSentenceLevelMachine.operations()
     # print(grammarCheckSentenceLevelMachine.errorMessageStorageWithSentenceDict)
