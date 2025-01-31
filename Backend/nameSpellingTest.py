@@ -1,27 +1,71 @@
 '''
 Jan 17, 2025
 '''
-import json, nltk, rapidfuzz
+import json, nltk
+from rapidfuzz import fuzz, process
 
 class nameSpellingCheck:
-    def __init__(self, nameJsonPath, sampleTextJsonPath):
+    def __init__(self, nameJsonPath, analysisTextJsonPath, wordComparisonScoreThreshold):
         self.nameJsonPath = nameJsonPath
-        self.sampleTextJsonPath = sampleTextJsonPath
+        self.analysisTextJsonPath = analysisTextJsonPath
+        self.wordComparisonScoreThreshold = wordComparisonScoreThreshold
+        self.nameDictionary = {
+    "Abbott, Jere": [
+        "Abbott, Jere",
+        "Abbott",
+        "Jere Abbott"
+    ],
+    "Abell, Walter": [
+        "Abell, Walter",
+        "Abell",
+        "Walter Abell"
+    ],
+    "Abraham, Karl": [
+        "Abraham, Karl",
+        "Abraham",
+        "Karl Abraham"
+    ]}#None #This stores all historian names and their name variations
 
     def processNamesDictionaryJson(self, nameJsonFilePath):
         with open(nameJsonFilePath, "r", encoding = "utf-8") as jsonContent:
-            return jsonContent
+            nameContent = json.load(jsonContent)
+        return nameContent
+    
+    def loadDictionaryContentToAnalayze(self, textToAnalyzeFilePath):
+        with open(textToAnalyzeFilePath, "r", encoding = "utf-8") as jsonContent:
+            textContent = json.load(jsonContent)
+        return textContent
 
     def fuzzyLogicMatch(self):
-        nameDictionary = self.processNamesDictionaryJson(self.nameJsonPath)
-        print(nameDictionary)
+        # self.nameDictionary = self.processNamesDictionaryJson(self.nameJsonPath)
+        textToAnalayzeDict = self.loadDictionaryContentToAnalayze(self.analysisTextJsonPath)
+        jointKeys = self.nameDictionary.keys() | textToAnalayzeDict.keys()
+        for historian in jointKeys:
+            nameListName = self.nameDictionary[historian]
+            contentListName = textToAnalayzeDict[historian]
+            for sentence in contentListName:
+                splittedSentence = sentence.split()
+                for word in splittedSentence:
+                    if len(word) > 1:
+                        matchList = self.wordMatch(word, historian, nameListName) #matchWord: list, score: integer
+                        print(matchList)
     
+    def wordMatch(self, wordToCheck, historianName, nameListName):
+        topMatches = []
+        for subName in nameListName:
+            score = fuzz.partial_ratio(wordToCheck, subName)
+            if score > self.wordComparisonScoreThreshold:
+                print(f"This is subName: {subName}")
+                print(f"This is the word we are checking: {wordToCheck}")
+                topMatches.append([subName, wordToCheck, score])
+        return topMatches
+
     def operations(self):
         self.fuzzyLogicMatch()
 
-
 if __name__ == "__main__":
-    nameJsonDict = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames.json"
-    sampleText = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/unfinishedRevisedDictionaryErrors2024-11-22.json"
-    nameSpellingCheckMachine = nameSpellingCheck(nameJsonDict, sampleText)
+    nameJsonDict = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames/historianNamesForComparison.json"
+    analysisTextJsonPath = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/unfinishedRevisedDictionaryErrors2024-11-22.json"
+    nameCheckSimilarityThreshold = 80
+    nameSpellingCheckMachine = nameSpellingCheck(nameJsonDict, analysisTextJsonPath, nameCheckSimilarityThreshold)
     nameSpellingCheckMachine.operations()

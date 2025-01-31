@@ -32,9 +32,41 @@ def historianIDJSON(csvFile, JsonFile):
     with open(JsonFile, "w", encoding="utf-8") as jsonContent:
         json.dump(nameIdDict, jsonContent, ensure_ascii=False, indent = 4)
 
+#This function creates a dictionary of different variations of a historian's name in preparation for spelling check reference. Example data format: 'Pillsbury, Edmund': ['Pillsbury', ' Edmund Pillsbury']
+def nameVariations(historianNameJsonFile, historianNamesUpdatedStorageJson):
+    with open (historianNameJsonFile, "r", encoding="utf-8") as historianNames:
+        historianNamesDict = json.load(historianNames)
+    updatedHistoriansNamesDict = {}
+    for historianID, name in historianNamesDict.items():
+        updatedHistoriansNamesDict[name] = []
+        nameSplitByComma = name.split(",")
+        updatedHistoriansNamesDict[name].append(name)
+        if len(nameSplitByComma) > 1 and len(nameSplitByComma) <= 3:
+            updatedHistoriansNamesDict[name].append(nameSplitByComma[0])
+            firstLastNames = nameSplitByComma[1] + " " + nameSplitByComma[0]
+            firstLastNames.strip()
+            # print(firstLastNames)
+            updatedHistoriansNamesDict[name].append(firstLastNames[1:])
+        elif len(nameSplitByComma) > 3:
+            firstLastNames = nameSplitByComma[1] + " " + nameSplitByComma[0]
+            firstLastNames.strip()
+            updatedHistoriansNamesDict[name].append(firstLastNames)
+        elif len(nameSplitByComma) > 1: #This is to check for names with more than 2 words long.
+            firstNameSplitSpace = nameSplitByComma[1].split()
+            if len(firstNameSplitSpace) > 1:
+                firstLastNames = firstNameSplitSpace[0] + " " + nameSplitByComma[0]
+                firstLastNames.strip()
+                updatedHistoriansNamesDict[name].append(firstLastNames)
+
+    with open(historianNamesUpdatedStorageJson, "w", encoding="utf-8") as jsonContent:
+        json.dump(updatedHistoriansNamesDict, jsonContent, ensure_ascii=False, indent = 4)
+    print("All dictionary exported to JSON.")
+
 if __name__=="__main__":
     csvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
     JsonFilePathDestination = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
-    historianNamesJson = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/historianNames.json"
+    historianNamesJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames/historianNames.json"
+    historianNamesUpdatedStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames/historianNamesForComparison.json"
     # csvJson(csvFilePath, JsonFilePathDestination)
-    historianIDJSON(csvFilePath, historianNamesJson)
+    # historianIDJSON(csvFilePath, historianNamesJson)
+    nameVariations(historianNamesJson, historianNamesUpdatedStorageJson)
