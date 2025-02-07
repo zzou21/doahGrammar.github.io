@@ -39,3 +39,20 @@
 
 # if 4 in range(1, len(lst) + 1):
 #     print("yes")
+
+import re
+
+def split_sentence(sentence):
+    result = []
+    # Use regex to find words along with their start and end indices
+    for match in re.finditer(r'\S+', sentence):
+        start = match.start()
+        end = match.end()
+        word = match.group()
+        result.append([start, end, word])
+    return result
+
+# Example usage
+sentence = "I like this this room"
+output = split_sentence(sentence)
+print(output)
