@@ -10,21 +10,22 @@ class nameSpellingCheck:
         self.analysisTextJsonPath = analysisTextJsonPath
         self.wordComparisonScoreThreshold = wordComparisonScoreThreshold
         self.nameDictionary = {
-    "Abbott, Jere": [
-        "Abbott, Jere",
-        "Abbott",
-        "Jere Abbott"
-    ],
-    "Abell, Walter": [
-        "Abell, Walter",
-        "Abell",
-        "Walter Abell"
-    ],
-    "Abraham, Karl": [
-        "Abraham, Karl",
-        "Abraham",
-        "Karl Abraham"
-    ]}#None #This stores all historian names and their name variations
+        "Abbott, Jere": [
+            "Abbott, Jere",
+            "Abbott",
+            "Jere Abbott"
+        ],
+        "Abell, Walter": [
+            "Abell, Walter",
+            "Abell",
+            "Walter Abell"
+        ],
+        "Abraham, Karl": [
+            "Abraham, Karl",
+            "Abraham",
+            "Karl Abraham"
+        ]}#None #This stores all historian names and their name variations
+
 
     def processNamesDictionaryJson(self, nameJsonFilePath):
         with open(nameJsonFilePath, "r", encoding = "utf-8") as jsonContent:
@@ -40,7 +41,8 @@ class nameSpellingCheck:
         # self.nameDictionary = self.processNamesDictionaryJson(self.nameJsonPath)
         textToAnalayzeDict = self.loadDictionaryContentToAnalayze(self.analysisTextJsonPath)
         jointKeys = self.nameDictionary.keys() | textToAnalayzeDict.keys()
-        
+        errorStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames/historianNamesSpellingErrorStorage.json"
+
         errorStorageBySentenceDict = {} 
         for historian in jointKeys:
             errorStorageBySentenceDict[historian] = {}
@@ -58,6 +60,8 @@ class nameSpellingCheck:
                             sentenceIssueStorage.append(wordPositionList)
                 errorStorageBySentenceDict[historian][sentence] = sentenceIssueStorage
             print(errorStorageBySentenceDict[historian])
+        with open(errorStorageJson, "w", encoding="utf-8") as jsonStorage:
+            json.dump(errorStorageBySentenceDict, jsonStorage, indent=4)
 
     def splitSentence(self, sentence):
         result = []

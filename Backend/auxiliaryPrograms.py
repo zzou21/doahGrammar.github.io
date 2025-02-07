@@ -62,6 +62,27 @@ def nameVariations(historianNameJsonFile, historianNamesUpdatedStorageJson):
         json.dump(updatedHistoriansNamesDict, jsonContent, ensure_ascii=False, indent = 4)
     print("All dictionary exported to JSON.")
 
+#This function is used to combine different specific error storage JSONs into one
+def combineErrorStorageJSONs(individualJsonPathList, destinationJson):
+    individualJsonDataList = []
+    for individualJsonPath in individualJsonPathList:
+        with open(individualJsonPath, "r", encoding="utf-8") as individualJsonContent:
+            content = json.load(individualJsonContent)
+            individualJsonDataList.append(content)
+    mergedFinalJson = individualJsonDataList[0]
+    for individualJsonContentIteration in individualJsonDataList[1:]:
+        for key in individualJsonContentIteration:
+            if key in mergedFinalJson:
+                for sentence in individualJsonContentIteration[key]:
+                    if sentence in mergedFinalJson[key]:
+                        mergedFinalJson[key][sentence].extend(individualJsonContentIteration[key][sentence])
+                    else:
+                        mergedFinalJson[key][sentence] = individualJsonContentIteration[key][sentence]
+            else:
+                mergedFinalJson[key] = individualJsonContentIteration[key]
+    with open(destinationJson, "w", encoding="utf-8") as storage:
+        json.dump(mergedFinalJson, storage, indent=4)
+
 if __name__=="__main__":
     csvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
     JsonFilePathDestination = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/doahContentJSON.json"
@@ -69,4 +90,11 @@ if __name__=="__main__":
     historianNamesUpdatedStorageJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/historianNames/historianNamesForComparison.json"
     # csvJson(csvFilePath, JsonFilePathDestination)
     # historianIDJSON(csvFilePath, historianNamesJson)
-    nameVariations(historianNamesJson, historianNamesUpdatedStorageJson)
+    # nameVariations(historianNamesJson, historianNamesUpdatedStorageJson)
+
+    individualJsonErrorStorageList = [
+        "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/doahGrammarErrorStorage.json",
+        "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/historianNamesSpellingErrorStorage.json"
+    ]
+    destinationCombinedJsonErrorStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/allCombinedErrorStorage.json"
+    combineErrorStorageJSONs(individualJsonErrorStorageList, destinationCombinedJsonErrorStorage)
