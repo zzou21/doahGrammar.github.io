@@ -99,10 +99,9 @@ def numOfErrors(jsonStorage):
 
     return errorCounter
 
-
 # This function removes empty errors (shown as emmpty lists) in error storage JSONs and return a new dictionary for JSON export:
 def removeEmptyErrors(jsonStorageUncorrected, jsonStorageCorrected):
-    with open(jsonStorage, "r", encoding="utf-8") as jsonOldStorage:
+    with open(jsonStorageUncorrected, "r", encoding="utf-8") as jsonOldStorage:
         uncorrectedDict = json.load(jsonOldStorage)
 
     correctedDict = {historian:
@@ -111,7 +110,9 @@ def removeEmptyErrors(jsonStorageUncorrected, jsonStorageCorrected):
         }
         for historian, paragraph in uncorrectedDict.items()
     }
-    return correctedDict
+    with open(jsonStorageCorrected, "w", encoding="utf-8") as correctedJson:
+        json.dump(correctedDict, correctedJson, indent=4)
+    print("Successfully stored new error dictionary with empty error lists filtered out.")
 
 if __name__=="__main__":
     csvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
@@ -128,5 +129,10 @@ if __name__=="__main__":
     ]
     destinationCombinedJsonErrorStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/allCombinedErrorStorage.json"
 
-    countNumOfErrorsJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/fullErrorStorageMarch7.json"
+    countNumOfErrorsJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
+
+    storingEmptyErrorsNotRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/fullErrorStorageMarch7.json"
+    storingEmptyErrorsRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
+
     print(numOfErrors(countNumOfErrorsJson))
+    # removeEmptyErrors(storingEmptyErrorsNotRemovedErrorJson, storingEmptyErrorsRemovedErrorJson)
