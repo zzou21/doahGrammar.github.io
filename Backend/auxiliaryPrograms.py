@@ -83,7 +83,35 @@ def combineErrorStorageJSONs(individualJsonPathList, destinationJson):
     with open(destinationJson, "w", encoding="utf-8") as storage:
         json.dump(mergedFinalJson, storage, indent=4)
 
+# This function counts the total number of errors in a dictionar. Takes in one parameter: a JSON file that stores errors:
+def numOfErrors(jsonStorage):
+    with open(jsonStorage, "r",  encoding="utf-8") as jsonStorageDict:
+        errorDict = json.load(jsonStorageDict)
 
+    errorCounter = 0
+    for historian, paragraph in errorDict.items():
+        for sentence, errorList in paragraph.items():
+            errorPerListCount = len(errorList)
+            for oneError in errorList:
+                if oneError[-1] == []:
+                    errorPerListCount -= 1
+            errorCounter += errorPerListCount
+
+    return errorCounter
+
+
+# This function removes empty errors (shown as emmpty lists) in error storage JSONs and return a new dictionary for JSON export:
+def removeEmptyErrors(jsonStorageUncorrected, jsonStorageCorrected):
+    with open(jsonStorage, "r", encoding="utf-8") as jsonOldStorage:
+        uncorrectedDict = json.load(jsonOldStorage)
+
+    correctedDict = {historian:
+        {sentence: [oneError for oneError in errorList if oneError[-1]] if errorList else errorList
+        for sentence, errorList in paragraph.items()
+        }
+        for historian, paragraph in uncorrectedDict.items()
+    }
+    return correctedDict
 
 if __name__=="__main__":
     csvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
@@ -99,4 +127,6 @@ if __name__=="__main__":
         "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/historianNamesSpellingErrorStorage.json"
     ]
     destinationCombinedJsonErrorStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/allCombinedErrorStorage.json"
-    combineErrorStorageJSONs(individualJsonErrorStorageList, destinationCombinedJsonErrorStorage)
+
+    countNumOfErrorsJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/fullErrorStorageMarch7.json"
+    print(numOfErrors(countNumOfErrorsJson))
