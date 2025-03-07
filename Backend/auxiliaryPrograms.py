@@ -134,5 +134,6 @@ if __name__=="__main__":
     storingEmptyErrorsNotRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/fullErrorStorageMarch7.json"
     storingEmptyErrorsRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
 
-    print(numOfErrors(countNumOfErrorsJson))
+    #-------Run function calls below-----#
+    # print(numOfErrors(countNumOfErrorsJson))
     # removeEmptyErrors(storingEmptyErrorsNotRemovedErrorJson, storingEmptyErrorsRemovedErrorJson)
