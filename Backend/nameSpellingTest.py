@@ -59,7 +59,6 @@ class nameSpellingCheck:
                             wordPositionList[2] = []
                             sentenceIssueStorage.append(wordPositionList)
                 errorStorageBySentenceDict[historian][sentence] = sentenceIssueStorage
-            print(f"Corrected {historian}'s sentence {sentence}")
             print(errorStorageBySentenceDict[historian])
         with open(errorStorageJson, "w", encoding="utf-8") as jsonStorage:
             json.dump(errorStorageBySentenceDict, jsonStorage, indent=4)

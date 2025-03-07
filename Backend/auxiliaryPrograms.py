@@ -83,28 +83,7 @@ def combineErrorStorageJSONs(individualJsonPathList, destinationJson):
     with open(destinationJson, "w", encoding="utf-8") as storage:
         json.dump(mergedFinalJson, storage, indent=4)
 
-# This function tells us the number of errors in a json error storage dictionary
-def numOfTotalErrors(errorStorageJson):
-    with open(errorStorageJson, "r", encoding="utf-8") as jsonStorage:
-        storageDict = json.load(jsonStorage)
-    errorCount = 0
-    for historian, paragraph in storageDict.items():
-        for sentence, errorList in paragraph.items():
-            numOfErrorPerSentence = len(errorList)
-            for oneError in errorList:
-                if oneError[2] == []:
-                    numOfErrorPerSentence -= 1
-            errorCount += numOfErrorPerSentence
-    return errorCount
 
-def filterOutEmptyErrors(errorStorageJson):
-    with open(errorStorageJson, "r", encoding="utf-8") as jsonStorage:
-        storageDict = json.load(jsonStorage)
-    newFilteredDict = {historian: {sentence: [oneError for oneError in errorList if oneError[-1]] if errorList else errorList
-        for sentence, errorList in paragraph.items()
-        }
-        for historian, paragraph in storageDict.items()
-    }
 
 if __name__=="__main__":
     csvFilePath = "/Users/Jerry/Desktop/DictionaryOfArtHistorians/doahGrammar/DoAHCSVContent.csv"
@@ -120,9 +99,4 @@ if __name__=="__main__":
         "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/historianNamesSpellingErrorStorage.json"
     ]
     destinationCombinedJsonErrorStorage = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/allCombinedErrorStorage.json"
-
-
-    numOfErrorsCounterDictJsonPath = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/allCombinedFullErrorStorageMarch7.json"
-
-    #-----------Run functions below-------#
-    print(numOfTotalErrors(numOfErrorsCounterDictJsonPath))
+    combineErrorStorageJSONs(individualJsonErrorStorageList, destinationCombinedJsonErrorStorage)
