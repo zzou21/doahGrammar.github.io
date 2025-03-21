@@ -151,7 +151,7 @@ if __name__=="__main__":
     storingEmptyErrorsRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
 
     # For splitJsonStorage function:
-    mainLargeJson = "/Users/Jerry/Desktop/DHproj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/templateErrorStorageMini.json"
+    mainLargeJson = "/Users/Jerry/Desktop/DHproj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/filteredFullStorageMarch7.json"
     splittedJsonStorageFolder = "/Users/Jerry/Desktop/DHproj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/singleHistorianErrorStorage"
 
     #-------Run function calls below-----#
