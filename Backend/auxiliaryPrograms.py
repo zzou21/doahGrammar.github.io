@@ -1,6 +1,6 @@
 # This file contains many auxiliary functions that might be helpful throughout the development of the project. Each function contains a brief comment describing its usage. Call each function at the end of this file in the "main" function block.
 
-import pandas as pd, json, csv
+import pandas as pd, json, csv, os
 
 # This function turns CSV to JSON
 def csvJson(csvFile, JsonFile):
@@ -116,6 +116,19 @@ def removeEmptyErrors(jsonStorageUncorrected, jsonStorageCorrected):
         json.dump(correctedDict, correctedJson, indent=4)
     print("Successfully stored new error dictionary with empty error lists filtered out.")
 
+# This function turns one large JSON that stores the information for multiple historians into having one JSON file for each historian.
+def splitJsonStorage(mainLargeJson, splittedJsonStorageFolder):
+    with open(mainLargeJson, "r", encoding="utf-8") as largeJson:
+        largeCombinedDict = json.load(largeJson)
+    
+    for historian, errorDict in largeCombinedDict.items():
+        individualJsonFileName = historian.replace(" ", "") + ".json"
+        individualJsonFilePath = os.path.join(splittedJsonStorageFolder, individualJsonFileName)
+        with open (individualJsonFilePath, "w", encoding="utf-8") as singleHistorianStorage:
+            json.dump(errorDict, singleHistorianStorage, indent=4)
+        print(f"Finished creating individual file for {individualJsonFileName}.")
+
+
 if __name__=="__main__":
 
     #-------Specify auxiliary function parameters/arguments below-----#
@@ -133,8 +146,13 @@ if __name__=="__main__":
 
     countNumOfErrorsJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
 
+    
     storingEmptyErrorsNotRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/fullErrorStorageMarch7.json"
     storingEmptyErrorsRemovedErrorJson = "/Users/Jerry/Desktop/DH proj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/emptyErrorsRemovedErrorStorage.json"
+
+    # For splitJsonStorage function:
+    mainLargeJson = "/Users/Jerry/Desktop/DHproj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/templateErrorStorageMini.json"
+    splittedJsonStorageFolder = "/Users/Jerry/Desktop/DHproj-reading/DictionaryOfArtHistorians/doahGrammar/Backend/allErrorStorageJson/singleHistorianErrorStorage"
 
     #-------Run function calls below-----#
     # csvJson(csvFilePath, JsonFilePathDestination)
@@ -143,3 +161,4 @@ if __name__=="__main__":
 
     # print(numOfErrors(countNumOfErrorsJson))
     # removeEmptyErrors(storingEmptyErrorsNotRemovedErrorJson, storingEmptyErrorsRemovedErrorJson)
+    splitJsonStorage(mainLargeJson, splittedJsonStorageFolder)
