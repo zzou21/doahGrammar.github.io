@@ -19,5 +19,8 @@ Need to do foreign language.
 
 Flag each foreign language word as error to manually check
 
+Use GitHub Pages to store and push changes
+
+
 
 '''
