@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/doahGrammar/static/css/main.0a0b3d1d.css",
+    "main.js": "/doahGrammar/static/js/main.ad81d43a.js",
+    "static/js/453.dfdc9e72.chunk.js": "/doahGrammar/static/js/453.dfdc9e72.chunk.js",
+    "index.html": "/doahGrammar/index.html",
+    "main.0a0b3d1d.css.map": "/doahGrammar/static/css/main.0a0b3d1d.css.map",
+    "main.ad81d43a.js.map": "/doahGrammar/static/js/main.ad81d43a.js.map",
+    "453.dfdc9e72.chunk.js.map": "/doahGrammar/static/js/453.dfdc9e72.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0a0b3d1d.css",
+    "static/js/main.ad81d43a.js"
+  ]
+}
